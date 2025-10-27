@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semua Berita | RS Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        /* --- Variabel CSS --- */
+        :root {
+            --brand: #007bff;
+            --muted: #6c757d;
+            --bg-light: #f8f9fa;
+        }
+
+        /* --- CSS Umum dan Reset --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        /* ==================================== */
+        /* 1. NAVBAR STYLING (Mobile-First)     */
+        /* ==================================== */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-inner {
+            display: flex;
+            /* Memisahkan brand (kiri) dan nav-links/burger (kanan) */
+            justify-content: space-between; 
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 5%; 
+        }
+
+        /* Logo dan Nama RS Demo (Sisi Kiri) */
+        .brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+        }
+        .brand .logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+        .brand .name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--brand);
+        }
+
+        /* Tombol Burger Menu (Tampil di Mobile) */
+        .burger-menu {
+            display: block; 
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--brand);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Navigasi Utama (Menu Sisi Kanan - Tersembunyi di Mobile secara default) */
+        .nav-links {
+            display: none; /* Sembunyikan default di mobile */
+            position: absolute;
+            top: 60px; /* Jarak di bawah navbar */
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 50;
+        }
+        /* Kelas yang ditambahkan via JS untuk menampilkan menu */
+        .nav-links.active {
+            display: block; 
+        }
+
+        /* Gaya List di Mobile */
+        .nav-list {
+            display: flex;
+            flex-direction: column; 
+        }
+        .nav-item {
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+        .nav-link {
+            padding: 12px 20px;
+            display: block;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .nav-link:hover, .nav-item.active .nav-link {
+            background-color: var(--bg-light);
+            color: var(--brand);
+        }
+
+        /* Submenu Dropdown di Mobile */
+        .submenu {
+            display: none; 
+            background-color: var(--bg-light);
+        }
+        /* Tambahkan kelas submenu-open saat submenu diklik di mobile (jika menggunakan JS) */
+        .submenu-item a {
+            padding: 10px 30px; /* Indentasi submenu */
+            font-weight: 400;
+            color: var(--muted);
+            display: block;
+        }
+        .submenu-item a:hover {
+            background-color: #e9ecef;
+            color: var(--brand);
+        }
+        
+        /* ==================================== */
+        /* 2. MEDIA QUERY (Desktop/Laptop)      */
+        /* ==================================== */
+        @media (min-width: 992px) {
+            
+            /* Sembunyikan Burger di Desktop */
+            .burger-menu {
+                display: none;
+            }
+            
+            /* Tampilkan Navigasi Utama di Desktop (Menu Sisi Kanan) */
+            .nav-links {
+                display: block;
+                position: static;
+                box-shadow: none;
+                width: auto;
+                background-color: transparent;
+            }
+
+            /* Gaya List di Desktop (Horizontal dan Kanan) */
+            .nav-list {
+                flex-direction: row; 
+                gap: 25px;
+            }
+            .nav-item {
+                border-bottom: none;
+            }
+            .nav-link {
+                padding: 20px 0; /* Padding vertikal di desktop */
+            }
+
+            /* Submenu Dropdown di Desktop */
+            .submenu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0; /* Mulai dari link induk */
+                background-color: white;
+                min-width: 200px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                padding: 10px 0;
+                z-index: 10;
+            }
+
+            .nav-item:hover .submenu {
+                display: block; /* Tampilkan saat hover di desktop */
+            }
+            .submenu-item a {
+                padding: 10px 20px;
+                color: #333;
+            }
+        }
+        
+        /* ==================================== */
+        /* 3. KONTEN (Header & Berita)          */
+        /* ==================================== */
+        .header-background {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://placehold.co/1200x250/007bff/white?text=Berita+RS+Demo');
+            background-size: cover;
+            background-position: center;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+        .header-background h1 {
+            font-size: 2.5em;
+            margin: 0;
+        }
+        
+        .berita-section {
+            padding: 0 5% 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: var(--brand);
+            font-weight: 600;
+        }
+        .berita-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .berita-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .berita-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .berita-thumbnail {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            background-color: #ccc;
+        }
+        .berita-content {
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .berita-meta {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .berita-meta .kategori {
+            color: var(--brand);
+            font-weight: bold;
+        }
+        .berita-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+            line-height: 1.4;
+        }
+        .berita-content p {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .berita-readmore {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* --- Pagination Styling --- */
+        .pagination a {
+            padding: 10px 15px; 
+            border: 1px solid #ccc; 
+            color: #333; 
+            margin-left: 5px; 
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pagination a:hover {
+            background-color: var(--brand);
+            color: white;
+        }
+        .pagination a.active {
+            border: 1px solid var(--brand);
+            color: white; 
+            background-color: var(--brand); 
+        }
+
+        /* ==================================== */
+        /* 4. FOOTER STYLING                    */
+        /* ==================================== */
+        .footer {
+            background-color: var(--brand); 
+            color: white;
+            padding: 40px 5%;
+            margin-top: 50px;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-col {
+            flex: 1 1 200px;
+        }
+        .footer-col h4 {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ffc107;
+            padding-bottom: 5px;
+        }
+        .footer-col p, .footer-col a {
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .social-icons a {
+            display: inline-block;
+            margin-right: 15px;
+            font-size: 1.5em;
+            color: white;
+        }
+        .mitra-logo {
+            width: 80px;
+            height: auto;
+            margin-right: 10px;
+            opacity: 0.8;
+            background-color: white;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .contact-info a {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .copyright {
+            text-align: center; 
+            margin-top: 30px; 
+            font-size: 0.8em; 
+            opacity: 0.8;
+        }
+        
+        /* Footer Responsive */
+        @media (max-width: 600px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .footer-col {
+                text-align: left !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-inner">
+            <a class="brand" href="index.html">
+                <img src="https://images.unsplash.com/photo-1600180758890-2b1b8d4a5f9d?auto=format&fit=crop&w=200&q=60" alt="Logo RS Demo" class="logo">
+                <div class="name">RS Demo</div>
+            </a>
+
+            <button class="burger-menu" id="burgerToggle" aria-label="Toggle navigation">
+                <i class="bi bi-list"></i>
+            </button>
+            
+            <nav class="nav-links" id="mainNav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Beranda</a></li>
+                    
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Pelayanan</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="igd.html">IGD</a></li>
+                            <li class="submenu-item"><a href="rawat-jalan.html">Rawat Jalan</a></li>
+                            <li class="submenu-item"><a href="rawat-inap.html">Rawat Inap</a></li>
+                            <li class="submenu-item"><a href="radiologi.html">Radiologi</a></li>
+                            <li class="submenu-item"><a href="laboratorium.html">laboratorium</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="cari-dokter.html" class="nav-link">Cari Dokter</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="dokter.html">Lihat Semua Dokter</a></li>
+                            <li class="submenu-item"><a href="jadwal-dokter.html">Jadwal Dokter</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item active">
+                        <a href="berita.html" class="nav-link">Berita</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="kategori-berita.html">Kategori Berita</a></li>
+                            <li class="submenu-item"><a href="berita.html">Semua Berita</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Fasilitas</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="fasilitas-unggulan.html">Fasilitas Unggulan</a></li>
+                            <li class="submenu-item"><a href="fasilitas-lainya.html">Fasilitas lainnya</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">RS Demo</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="tentang.html">Tentang Kami</a></li>
+                            <li class="submenu-item"><a href="galeri.html">Galeri</a></li>
+                            <li class="submenu-item"><a href="mitra-kami.html">Mitra kami</a></li>
+                            <li class="submenu-item"><a href="faq.html">FAQ</a></li>
+                            <li class="submenu-item"><a href="syarat&ketentuan.html">Syarat&ketentuan</a></li>
+                            <li class="submenu-item"><a href="kebijakan-privasi.html">kebijakan-privasi</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item"><a href="karir.html" class="nav-link">Karir</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="header-background">
+        <h1>Semua Artikel & Berita</h1>
+    </div>
+
+    <main class="berita-section">
+        <h2 class="section-title">Semua Artikel RS Demo (Halaman 1)</h2>
+        
+        <div class="berita-grid">
+            
+            <a href="artikel-detail-1.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+1');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Kesehatan Umum</span>
+                        <span>🗓 15 Oktober 2025</span>
+                    </div>
+                    <h3>Pentingnya Imunisasi Dasar untuk Kesehatan Anak Usia Dini</h3>
+                    <p>Imunisasi adalah langkah preventif yang krusial. Artikel ini membahas jadwal dan manfaat imunisasi dasar yang tersedia di RS Demo. Pastikan buah hati Anda terlindungi!...</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+
+            <a href="artikel-detail-2.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+2');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Layanan Livasya</span>
+                        <span>🗓 12 Oktober 2025</span>
+                    </div>
+                    <h3>Fasilitas Terbaru: USG 4 Dimensi di Poli Kandungan</h3>
+                    <p>RS Demo kini menghadirkan layanan USG 4D untuk pengalaman pemeriksaan kehamilan yang lebih detail dan interaktif bagi calon orang tua di Majalengka....</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+            
+            <a href="artikel-detail-3.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+3');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Promosi & Event</span>
+                        <span>🗓 08 Oktober 2025</span>
+                    </div>
+                    <h3>[EVENT] Seminar Kesehatan Jantung Gratis Bersama Sp.JP</h3>
+                    <p>Jangan lewatkan seminar interaktif bersama dr. Bima, Sp.JP mengenai pencegahan penyakit jantung koroner. Daftar sekarang, kuota terbatas!...</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+
+            <a href="artikel-detail-4.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+4');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Dokter Kami</span>
+                        <span>🗓 01 Oktober 2025</span>
+                    </div>
+                    <h3>Selamat Datang Dokter Baru Spesialis Bedah Umum</h3>
+                    <p>Perkenalkan, dr. Irwan M., Sp.B, spesialis bedah umum yang kini bergabung dengan tim medis RS Demo untuk melayani Anda lebih baik....</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+            
+            <a href="artikel-detail-5.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+5');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Teknologi Medis</span>
+                        <span>🗓 28 September 2025</span>
+                    </div>
+                    <h3>MRI Terbaru Mampu Deteksi Lebih Akurat</h3>
+                    <p>RS Demo mengupgrade mesin MRI dengan teknologi terbaru yang menawarkan resolusi gambar lebih tinggi dan waktu scan yang lebih cepat....</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+            
+            <a href="artikel-detail-6.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+6');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Info COVID-19</span>
+                        <span>🗓 20 September 2025</span>
+                    </div>
+                    <h3>Pembaruan Protokol Kesehatan di Lingkungan Rumah Sakit</h3>
+                    <p>Meskipun pandemi mereda, kami tetap menjaga standar protokol kesehatan yang ketat untuk kenyamanan dan keamanan pasien....</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+            
+            <a href="artikel-detail-7.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+7');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Kesehatan Umum</span>
+                        <span>🗓 10 September 2025</span>
+                    </div>
+                    <h3>Tips Menjaga Kualitas Tidur yang Optimal Setiap Malam</h3>
+                    <p>Kualitas tidur yang buruk dapat memengaruhi kesehatan secara keseluruhan. Pelajari tips dan trik dari dokter umum kami untuk tidur nyenyak....</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+            
+            <a href="artikel-detail-8.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+8');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Layanan Livasya</span>
+                        <span>🗓 05 September 2025</span>
+                    </div>
+                    <h3>Pendaftaran Online: Lebih Cepat dan Anti Antri</h3>
+                    <p>Gunakan layanan pendaftaran online kami untuk memangkas waktu tunggu Anda. Pelayanan poliklinik kini bisa diakses dari mana saja....</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+            
+            <a href="artikel-detail-9.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+9');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Promosi & Event</span>
+                        <span>🗓 28 Agustus 2025</span>
+                    </div>
+                    <h3>Diskon Pemeriksaan Gigi dan Mulut Akhir Bulan</h3>
+                    <p>Nikmati diskon khusus untuk layanan Scaling dan pemeriksaan rutin gigi oleh drg. Puspita S. Berlaku hingga akhir bulan ini!...</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+            
+            <a href="artikel-detail-10.html" class="berita-card">
+                <div class="berita-thumbnail" style="background-image: url('https://placehold.co/400x400/007bff/white?text=Artikel+10');"></div>
+                <div class="berita-content">
+                    <div class="berita-meta">
+                        <span class="kategori">Teknologi Medis</span>
+                        <span>🗓 15 Agustus 2025</span>
+                    </div>
+                    <h3>Sistem E-Rekam Medis: Data Pasien Lebih Aman</h3>
+                    <p>Implementasi sistem rekam medis elektronik menjamin data pasien terintegrasi, aman, dan mudah diakses oleh tim medis terkait....</p>
+                    <span class="berita-readmore">Baca Selengkapnya →</span>
+                </div>
+            </a>
+            
+        </div>
+        
+        <div class="pagination" style="text-align: center; margin-top: 40px;">
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">→</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Temukan Kami</h4>
+                <p>Jl. Raya Timur III No.875, Dawuan, Kec. Dawuan, Kabupaten Majalengka, Jawa Barat 45453</p>
+                <div class="social-icons" style="margin-top: 15px;">
+                    <a href="https://facebook.com/rsulivasya" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://twitter.com/rsulivasya" title="Twitter"><i class="bi bi-twitter"></i></a>
+                    <a href="https://instagram.com/rsulivasya" title="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="https://youtube.com/rsulivasya" title="YouTube"><i class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col contact-info" style="text-align: right;">
+                <h4>Hubungi Kami</h4>
+                <a href="tel:+6281211151300">+62 812-1115-1300</a>
+                <a href="tel:(0233)8668019">(0233) 8668019</a>
+                <a href="mailto:contact@livasya.com">contact@livasya.com</a>
+            </div>
+            <div class="footer-col" style="text-align: right;">
+                <h4>Mitra Kami</h4>
+                <img src="https://via.placeholder.com/80x40?text=BPJS" alt="BPJS Kesehatan" class="mitra-logo">
+                <img src="https://via.placeholder.com/80x40?text=ADMEDIKA" alt="Admedika" class="mitra-logo">
+                <img src="https://via.placeholder.com/80x40?text=FULLERTON" alt="Fullerton" class="mitra-logo">
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2025 created by Team IT Livasya | all rights reserved. (Mockup)
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('burgerToggle').addEventListener('click', function() {
+            const navLinks = document.getElementById('mainNav');
+            navLinks.classList.toggle('active');
+            
+            // Mengubah ikon burger menjadi close (X) dan sebaliknya
+            const icon = this.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('bi-list');
+                icon.classList.add('bi-x-lg'); // Ikon silang (x)
+            } else {
+                icon.classList.remove('bi-x-lg');
+                icon.classList.add('bi-list'); // Ikon garis tiga
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kategori Berita | RS Demo</title>
+    <style>
+        /* --- Variabel CSS Global --- */
+        :root {
+            --brand-primary: #007bff;
+            --brand-secondary: #ffc107;
+            --text-dark: #333;
+            --text-muted: #6c757d;
+            --bg-light: #f4f7f6;
+            --nav-height: 60px;
+        }
+
+        /* --- Global & Typography --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ====================================
+           1. NAVIGASI (Desktop & Mobile)
+           ==================================== */
+        .navbar {
+            background-color: #f8fafc;
+            padding: 0 5%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            min-height: var(--nav-height);
+        }
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-brand {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--brand-primary);
+            padding: 15px 0;
+        }
+
+        /* --- Desktop Navigation (.nav-list) --- */
+        .nav-list {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .nav-link {
+            padding: 20px 0; /* Padding vertikal untuk area klik besar */
+            display: block;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        .nav-link:hover, .nav-item.active .nav-link {
+            color: var(--brand-secondary);
+        }
+        
+        /* --- Submenu (Dropdown Desktop) --- */
+        .submenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            z-index: 10;
+            border-radius: 4px;
+        }
+        .nav-item:hover .submenu {
+            display: block;
+        }
+        .submenu-item a {
+            color: var(--text-dark);
+            padding: 10px 20px;
+            display: block;
+        }
+        .submenu-item a:hover {
+            background-color: #f1f1f1;
+            color: var(--brand-primary);
+        }
+
+        /* --- Burger Menu Toggler (Hanya Tampil di Mobile) --- */
+        .burger-toggler {
+            display: none; /* Sembunyikan di Desktop */
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 2rem;
+            color: var(--brand-primary);
+        }
+
+        /* --- Mobile Navigation (Default tersembunyi) --- */
+        #mobile-menu {
+            display: none; 
+            position: absolute;
+            top: var(--nav-height); 
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 990;
+            padding-bottom: 10px;
+        }
+        #mobile-menu.open {
+            display: block;
+        }
+        .mobile-list a {
+            padding: 12px 5%;
+            display: block;
+            border-bottom: 1px solid #eee;
+            font-weight: 500;
+        }
+        /* Styling untuk sub-item di mobile (details/summary) */
+        .mobile-list details {
+            border-bottom: 1px solid #eee;
+        }
+        .mobile-list summary {
+            padding: 12px 5%;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .mobile-list .sub-link {
+            padding: 8px 5% 8px 10%; /* Indentasi submenu */
+            font-weight: 400;
+            background-color: #f8f8f8;
+            border: none;
+        }
+
+        /* ====================================
+           2. TAMPILAN KHUSUS MOBILE (< 992px)
+           ==================================== */
+        @media (max-width: 991px) {
+            .nav-list {
+                display: none; /* Sembunyikan navbar desktop */
+            }
+            .burger-toggler {
+                display: block; /* Tampilkan burger menu */
+            }
+        }
+
+        /* ====================================
+           3. KONTEN UTAMA (Dipertahankan)
+           ==================================== */
+        .header-background {
+            background-image: url('https://placehold.co/1200x250/007bff/ffffff?text=Kategori+Berita'); /* Ganti placeholder agar lebih relevan */
+            background-size: cover;
+            background-position: center;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .header-background h1 {
+            font-size: 2.5em;
+            margin: 0;
+            padding: 15px 30px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+        .kategori-section {
+            padding: 0 5% 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .section-title {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: var(--brand-primary);
+            font-weight: 600;
+        }
+        .kategori-list-vertikal {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .kategori-card-vertikal {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            border-left: 5px solid var(--brand-primary);
+        }
+        .kategori-card-vertikal:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background-color: #e9f5ff;
+        }
+        .kategori-card-vertikal .icon {
+            font-size: 2em;
+            color: var(--brand-primary);
+            margin-right: 20px;
+        }
+        .kategori-info h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: var(--text-dark);
+        }
+        .kategori-info p {
+            margin: 5px 0 0;
+            color: var(--text-muted);
+            font-size: 0.85em;
+        }
+
+        /* ====================================
+           4. FOOTER (Dipertahankan)
+           ==================================== */
+        .footer {
+            background-color: var(--brand-primary); 
+            color: white;
+            padding: 40px 5%;
+            margin-top: 50px;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-col {
+            flex: 1 1 200px;
+        }
+        .footer-col h4 {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--brand-secondary);
+            padding-bottom: 5px;
+        }
+        .footer-col p, .footer-col a {
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: white; /* Pastikan link footer terlihat */
+        }
+        .social-icons a {
+            display: inline-block;
+            margin-right: 15px;
+            font-size: 1.5em;
+            color: white;
+        }
+        .mitra-logo {
+            width: 80px;
+            height: auto;
+            margin-right: 10px;
+            opacity: 0.8;
+        }
+        .contact-info a {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">RS Demo</a>
+            
+            <nav class="nav-desktop">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Beranda</a></li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Pelayanan</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="igd.html">IGD</a></li>
+                            <li class="submenu-item"><a href="rawat1.html">Rawat Jalan</a></li>
+                            <li class="submenu-item"><a href="rawat2.html">Rawat Inap</a></li>
+                            <li class="submenu-item"><a href="radiologi.html">Radiologi</a></li>
+                            <li class="submenu-item"><a href="laboratorium.html">Laboratorium</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="cari-dokter.html" class="nav-link">Cari Dokter</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="dokter.html">Jadwal Dokter</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="berita.html" class="nav-link">Berita</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="kategori-berita.html">Kategori Berita</a></li>
+                            <li class="submenu-item"><a href="berita.html">Semua Berita</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Fasilitas</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="fasilitas-unggulan.html">Fasilitas Unggulan</a></li>
+                            <li class="submenu-item"><a href="fasilitas-lainya.html">Fasilitas Lainya</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Livasya</a>
+                        <ul class="submenu">
+                            <li class="submenu-item"><a href="tentang-kami.html">Tentang Kami</a></li>
+                            <li class="submenu-item"><a href="galeri.html">Galeri</a></li>
+                            <li class="submenu-item"><a href="mitra-kami.html">Mitra Kami</a></li>
+                            <li class="submenu-item"><a href="faq.html">FAQ</a></li>
+                            <li class="submenu-item"><a href="syarat&ketentuan.html">Syarat & Ketentuan</a></li>
+                            <li class="submenu-item"><a href="kebijakan-privasi.html">Kebijakan Privasi</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a href="karir.html" class="nav-link">Karir</a></li>
+                </ul>
+            </nav>
+            
+            <button class="burger-toggler" id="burger-btn" aria-label="Toggle navigation">☰</button>
+        </div>
+
+        <nav id="mobile-menu" class="mobile-list">
+            <a href="index.html">Beranda</a>
+            
+            <details>
+                <summary>Pelayanan</summary>
+                <a href="igd.html" class="sub-link">IGD</a>
+                <a href="rawat1.html" class="sub-link">Rawat Jalan</a>
+                <a href="rawat2.html" class="sub-link">Rawat Inap</a>
+                <a href="radiologi.html" class="sub-link">Radiologi</a>
+                <a href="laboratorium.html" class="sub-link">Laboratorium</a>
+            </details>
+
+            <details>
+                <summary>Cari Dokter</summary>
+                <a href="cari-dokter.html" class="sub-link">Cari Dokter</a>
+                <a href="dokter.html" class="sub-link">Jadwal Dokter</a>
+            </details>
+
+            <details open>
+                <summary style="color: var(--brand-secondary);">Berita</summary>
+                <a href="kategori-berita.html" class="sub-link" style="color: var(--brand-primary); font-weight: 600;">Kategori Berita</a>
+                <a href="berita.html" class="sub-link">Semua Berita</a>
+            </details>
+            
+            <details>
+                <summary>Fasilitas</summary>
+                <a href="fasilitas-unggulan.html" class="sub-link">Fasilitas Unggulan</a>
+                <a href="fasilitas-lainya.html" class="sub-link">Fasilitas Lainya</a>
+            </details>
+            
+            <details>
+                <summary>Livasya</summary>
+                <a href="tentang-kami.html" class="sub-link">Tentang Kami</a>
+                <a href="galeri.html" class="sub-link">Galeri</a>
+                <a href="mitra-kami.html" class="sub-link">Mitra Kami</a>
+                <a href="faq.html" class="sub-link">FAQ</a>
+                <a href="syarat&ketentuan.html" class="sub-link">Syarat & Ketentuan</a>
+                <a href="kebijakan-privasi.html" class="sub-link">Kebijakan Privasi</a>
+            </details>
+
+            <a href="karir.html">Karir</a>
+        </nav>
+    </header>
+
+    <div class="header-background">
+        <h1>Kategori Berita</h1>
+    </div>
+
+    <main class="kategori-section">
+        <h2 class="section-title">Pilih Topik Berita</h2>
+        
+        <div class="kategori-list-vertikal">
+            <a href="berita.html?kategori=kesehatan-umum" class="kategori-card-vertikal">
+                <div class="icon">⚕</div>
+                <div class="kategori-info">
+                    <h3>Kesehatan Umum</h3>
+                    <p>Artikel seputar tips hidup sehat dan informasi medis dasar dari tim ahli kami.</p>
+                </div>
+            </a>
+            <a href="berita.html?kategori=layanan-rs" class="kategori-card-vertikal">
+                <div class="icon">🏥</div>
+                <div class="kategori-info">
+                    <h3>Layanan Livasya</h3>
+                    <p>Informasi terbaru mengenai fasilitas, poliklinik, dan pelayanan unggulan RS Demo.</p>
+                </div>
+            </a>
+            <a href="berita.html?kategori=promosi" class="kategori-card-vertikal">
+                <div class="icon">🎁</div>
+                <div class="kategori-info">
+                    <h3>Promosi & Event</h3>
+                    <p>Jadwal seminar, bakti sosial, dan penawaran khusus untuk masyarakat.</p>
+                </div>
+            </a>
+            <a href="berita.html?kategori=teknologi" class="kategori-card-vertikal">
+                <div class="icon">🔬</div>
+                <div class="kategori-info">
+                    <h3>Teknologi Medis</h3>
+                    <p>Ulasan tentang alat-alat dan prosedur medis terbaru yang digunakan di rumah sakit.</p>
+                </div>
+            </a>
+            <a href="berita.html?kategori=dokter" class="kategori-card-vertikal">
+                <div class="icon">👨‍⚕</div>
+                <div class="kategori-info">
+                    <h3>Dokter Kami</h3>
+                    <p>Profil dan pencapaian tim dokter spesialis serta jadwal praktik terkini.</p>
+                </div>
+            </a>
+            <a href="berita.html?kategori=covid" class="kategori-card-vertikal">
+                <div class="icon">🦠</div>
+                <div class="kategori-info">
+                    <h3>Info COVID-19</h3>
+                    <p>Informasi terkini seputar pandemi, protokol kesehatan, dan program vaksinasi.</p>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Temukan Kami</h4>
+                <p>Jl. Raya Timur III No.875, Dawuan, Kec. Dawuan, Kabupaten Majalengka, Jawa Barat 45453</p>
+                <div class="social-icons" style="margin-top: 15px;">
+                    <a href="https://facebook.com/rsulivasya" title="Facebook">f</a>
+                    <a href="https://twitter.com/rsulivasya" title="Twitter">t</a>
+                    <a href="https://instagram.com/rsulivasya" title="Instagram">i</a>
+                    <a href="https://youtube.com/rsulivasya" title="YouTube">y</a>
+                </div>
+            </div>
+            <div class="footer-col contact-info" style="text-align: right;">
+                <h4>Hubungi Kami</h4>
+                <a href="tel:+6281211151300">+6281211151300</a>
+                <a href="tel:(0233)8668019">(0233) 8668019</a>
+                <a href="mailto:contact@livasya.com">contact@livasya.com</a>
+            </div>
+            <div class="footer-col" style="text-align: right;">
+                <h4>Mitra Kami</h4>
+                <img src="https://via.placeholder.com/80x40?text=BPJS" alt="BPJS Kesehatan" class="mitra-logo">
+                <img src="https://via.placeholder.com/80x40?text=ADMEDIKA" alt="Admedika" class="mitra-logo">
+                <img src="https://via.placeholder.com/80x40?text=FULLERTON" alt="Fullerton" class="mitra-logo">
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 30px; font-size: 0.8em; opacity: 0.8;">
+            &copy; 2025 created by Team IT Livasya | all rights reserved. (Mockup)
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const burgerBtn = document.getElementById('burger-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            // Fungsi untuk men-toggle menu mobile
+            burgerBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('open');
+            });
+            
+            // Tambahan: Tutup menu jika mengklik di luar menu (opsional, tapi baik)
+            document.addEventListener('click', function(event) {
+                if (mobileMenu.classList.contains('open') && 
+                    !burgerBtn.contains(event.target) && 
+                    !mobileMenu.contains(event.target)) {
+                    mobileMenu.classList.remove('open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
